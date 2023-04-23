@@ -11,6 +11,8 @@ import ContractDetails from './pages/admin/contractDetails';
 import UserProvider from './context';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Button } from '@mui/material';
+
 
 const Login = lazy(() => import('./pages/login'));
 
@@ -21,6 +23,10 @@ function App() {
 
     <Suspense>
       <CrmAppbar />
+      
+        <Button component={Link} to={"/login"}>
+login
+        </Button>
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />

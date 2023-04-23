@@ -19,7 +19,6 @@ const Login = lazy(() => import('./pages/login'));
 function App() {
 
   return (
-    <UserProvider>
 
     <Suspense>
       <CrmAppbar />
@@ -27,6 +26,8 @@ function App() {
         <Button component={Link} to={"/login"}>
 login
         </Button>
+    <UserProvider>
+
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -38,8 +39,9 @@ login
         <Route path="/admin/users" element={<Users />} />
         <Route path='contract-details/:slug/:energie' element={<ContractDetails/>} />
       </Routes>
-    </Suspense>
     </UserProvider>
+
+    </Suspense>
   );
 }
 

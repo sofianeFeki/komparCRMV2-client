@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import CrmAppbar from './components/appbar';
 import Admin from './pages/admin';
 import ContractCreate from './pages/admin/contractCreate';

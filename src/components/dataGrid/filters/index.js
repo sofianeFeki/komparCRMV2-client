@@ -7,6 +7,7 @@ import * as locales from 'react-date-range/dist/locale';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { getFilters } from '../../../functions/contract';
+import { useDispatch } from 'react-redux';
 
 const  intialState = {
   partenaires: ['Kompar_TV_KE40', 'Kompar_TV_KE24', 'Kompar_TV_KE27', 'Kompar_TV_KE42', 'Kompar_TV_KE31', 'Kompar_TV_KE41', 'Kompar Energie 21', 'Kompar_TV_KE39', 'Kompar_TV_KE30', 'Kompar_TV_KE34', 'Kompar Energie 00', 'Kompar Energie 01', 'Kompar_TV_KE20', 'Kompar_TV_KE35', 'Kompar_TV_KE33', 'Kompar_TV_KE23', 'Kompar energie 26', 'Kompar_TV_KE14', 'Kompar_TV_KE32', 'Kompar_TV_KE37', 'kompar energie 29', 'Kompar_TV_KE38', 'kompar energie 28', 'Kompar_TV_KE36'],
@@ -15,78 +16,87 @@ const  intialState = {
   fournisseurs: ['ohm', 'Samsung'],
   
 };
-const Filters = () => {
+export const Filters = () => {
+    
+  const dispatch = useDispatch()
 
+  const [open, setOpen] = useState(false);
   
-  const [serverFilters, setServerFilters] = useState({
-    partenaire: '',
-    qualificationQté: '',
-    qualificationWc: '',
-    fournisseur: '',
-    date : [
-      {
-        startDate: new Date(),
-        endDate: null,
-        key: 'selection'
-      }
-    ],
-  });
-  const [filterCount, setFilterCount] = useState(0);
-
- 
-  const loadContract = () => {
-    // getFilters(serverFilters).then((c) => {
-    //   console.log("filters",c.data)
-    //    });
   
-  };
-  
- 
-
-  useEffect(() => {
-    loadContract();
-
-    let count = 0;
-    for (const key in serverFilters) {
-      if (key === "date") {
-        if (serverFilters.date[0].startDate !== null && serverFilters.date[0].endDate !== null) {
-          count++;
-        }
-      } else if (serverFilters[key] !== '' && serverFilters[key] !== null) {
-        count++;
-      }
-    }
-    setFilterCount(count);
-    //console.log(serverFilters)
-  }, [serverFilters]);
-
-
-  const handleChange = (e) => {
-    setServerFilters({ ...serverFilters, [e.target.name]: e.target.value });
-
-  };
-  const handleDateChange = (item) => {
-    setServerFilters((prevFilters) => ({
-      ...prevFilters,
-      date: [item.selection]
-    }));  }
-
-  const handleReset = () => {
-    setServerFilters({
+    const [serverFilters, setServerFilters] = useState({
       partenaire: '',
       qualificationQté: '',
       qualificationWc: '',
       fournisseur: '',
-      date :  [
+      date : [
         {
           startDate: new Date(),
           endDate: null,
           key: 'selection'
         }
-      ]
+      ],
     });
+    const [filterCount, setFilterCount] = useState(0);
+
+  
+    const handleApply = () => {
+      getFilters(serverFilters).then((c) => {
+        console.log("filters", c.data);
+        dispatch({ type: 'SET_FILTERS', payload: serverFilters });
+        dispatch({ type: 'SET_SERVER_DATA', payload: c.data });
+        setOpen(false)
+      });
+    };
     
-  };
+  
+
+    useEffect(() => {
+      dispatch({
+        type: 'SET_SERVER_FILTERS',
+        payload: serverFilters,
+      });
+
+      let count = 0;
+      for (const key in serverFilters) {
+        if (key === "date") {
+          if (serverFilters.date[0].startDate !== null && serverFilters.date[0].endDate !== null) {
+            count++;
+          }
+        } else if (serverFilters[key] !== '' && serverFilters[key] !== null) {
+          count++;
+        }
+      }
+      setFilterCount(count);
+    }, [serverFilters]);
+
+
+    const handleChange = (e) => {
+      setServerFilters({ ...serverFilters, [e.target.name]: e.target.value });
+
+    };
+    const handleDateChange = (item) => {
+      setServerFilters((prevFilters) => ({
+        ...prevFilters,
+        date: [item.selection]
+      }));  }
+
+    const handleReset = () => {
+      setServerFilters({
+        partenaire: '',
+        qualificationQté: '',
+        qualificationWc: '',
+        fournisseur: '',
+        date :  [
+          {
+            startDate: new Date(),
+            endDate: null,
+            key: 'selection'
+          }
+        ]
+      });
+      dispatch({ type: 'RESET_FILTERS' });
+
+    };
 
 
  const content = 
@@ -185,6 +195,9 @@ const Filters = () => {
       title={filterCount > 0 ? "Effacer" : "Filtres"}
       text={content}
       handleReset={handleReset}
+      handleApply={handleApply}
+      open={open}
+      setOpen={setOpen}
     />
   );
 };

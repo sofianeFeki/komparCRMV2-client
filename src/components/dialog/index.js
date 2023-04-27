@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -24,8 +24,7 @@ function PaperComponent(props) {
   );
 }
 
-const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeContent, chipIcon, handleReset }) => {
-  const [open, setOpen] = useState(false);
+const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeContent, chipIcon, handleReset, handleApply, open, setOpen }) => {
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -65,7 +64,7 @@ const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeCon
           <Button autoFocus onClick={handleClose} variant='outlined' size='small'>
           Annuler
           </Button>
-          <Button onClick={handleClose} variant='contained' size='small'>Appliquer</Button>
+          <Button onClick={handleApply} variant='contained' size='small'>Appliquer</Button>
         </DialogActions>
       </Dialog>
       </ThemeProvider>

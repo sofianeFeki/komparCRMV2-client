@@ -39,9 +39,9 @@ const Login = () => {
 
   const { user } = useSelector((state) => ({ ...state }));
 
-  // useEffect(() => {
-  //   if (user && user.token) history('welcomeToTheApp');
-  // }, [user, history]);
+  useEffect(() => {
+    if (user && user.token) history('/admin');
+  }, [user, history]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -69,12 +69,12 @@ const Login = () => {
               _id: res.data._id,
             },
           });
+          setLoading(false);
         })
         .catch((err) => alert(err));
     } catch (error) {
       alert(error);
     }
-    setLoading(false);
   };
 
   const handleFormFieldUpdate = (value, field) => {

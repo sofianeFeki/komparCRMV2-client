@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { currentUser } from '../functions/user';
 import { auth } from '../services/firebase';
 
 const UserProvider = ({ children }) => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true); // add a loading state
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -32,10 +33,15 @@ const UserProvider = ({ children }) => {
               type: 'LOGGED_OUT_USER',
             });
           }
+          setLoading(false); 
     });
 
     return unsubscribe;
   }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading...</div>; // show loading message
+  }
 
   return <>{children}</>;
 };

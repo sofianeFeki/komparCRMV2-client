@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MainContainer } from "../../style/mainContainer";
 import { useSelector } from "react-redux";
-import { Box, Button, Divider, List, ListItem, ListItemText, ListSubheader, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Chip, Divider, List, ListItem, ListItemText, ListSubheader, Paper, Stack, Typography } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import QualificationWc from "../../components/qalification/QualificationWc";
 import QualificationQualité from "../../components/qalification/QualificationQualité";
@@ -10,13 +10,18 @@ import { grey } from "@mui/material/colors";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getContract } from "../../functions/contract";
 import moment from "moment";
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 
 
 
 const ContractDetails = () => {
 
-    const {drawer} = useSelector((state) => ({...state}))
+    const {drawer  } = useSelector((state) => ({...state}))
     const [data, setData] = useState([]);
+    
+    const {quality, sav, wc} = data
+
+
     const [otherContractLink, setOtherContractLink] = useState("");
     const history = useNavigate()
 
@@ -30,7 +35,8 @@ const ContractDetails = () => {
          });
     };
     useEffect(() => {
-      loadContract(slug, energie);
+      loadContract();
+      console.log(slug, energie)
     }, [slug, energie]);
 
     const handleOtherContractClick = (event) => {
@@ -38,23 +44,29 @@ const ContractDetails = () => {
       history(otherContractLink)
     };
 
+
     return(
      <MainContainer open={drawer} sx={{  backgroundColor : grey[100] , height:"100vh"}}>
         <Box sx={{ m: 2}}>
             <Box sx={{display : 'flex' , justifyContent:'space-between'}}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            <Stack direction="row" spacing={1}>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>
         Détail de la souscription
       </Typography>
-      <Button
-              variant="outlined"
+      {otherContractLink && <Chip
             onClick={handleOtherContractClick}
-            >
-              change
-            </Button>
+            label=" switch contrat"
+            icon={<ChangeCircleIcon />}
+            />
+             
+            }
+              </Stack>
+        
+      
       <Stack direction="row" spacing={2}>
-        <QualificationQualité />
-  <QualificationWc/>
-  <QualificationSav />
+        {quality ? <QualificationQualité data={quality} /> : null}
+        {wc ? <QualificationWc data={wc} /> : null}
+        {sav ? <QualificationSav data={sav} /> : null}
   <Button variant="outlined" size="small" sx={{backgroundColor : 'white'}}>retour</Button>
 </Stack>
 </Box>
@@ -128,8 +140,8 @@ const ContractDetails = () => {
       </Typography>
       </ListItem>
       <Divider  />
-      <ListItem >
-        <ListItemText id="switch-list-label-wifi" primary="Puissance" />
+      <ListItem sx={{fontWeight : 700}} >
+        <ListItemText sx={{fontWeight : 700}} id="switch-list-label-wifi" primary="Puissance" />
         <Typography >
         {data.Puissance}
       </Typography>
@@ -187,13 +199,13 @@ const ContractDetails = () => {
       <ListItem >
         <ListItemText id="switch-list-label-wifi" primary="Qualification " />
         <Typography >
-        { ""}
+        { quality &&  quality.qualification}
       </Typography>
       </ListItem>
       <ListItem >
         <ListItemText id="switch-list-label-wifi" primary="Comentaire" />
         <Typography >
-        { ""}      
+        {quality && quality.comment && quality.comment.slice(0, 80) + (quality.comment.length > 50 ? '...' : '')}
         </Typography>
       </ListItem>
     </List>
@@ -205,14 +217,14 @@ const ContractDetails = () => {
     >
       <ListItem >
         <ListItemText id="switch-list-label-wifi" primary="Qualification " />
-        <Typography >
-        { ""}
+       <Typography >
+       { wc &&  wc.qualification}
       </Typography>
       </ListItem>
       <ListItem >
         <ListItemText id="switch-list-label-wifi" primary="Comentaire" />
         <Typography >
-        {""}
+        { wc &&  wc.comment}
       </Typography>
       </ListItem>
     </List>
@@ -225,13 +237,13 @@ const ContractDetails = () => {
       <ListItem >
         <ListItemText id="switch-list-label-wifi" primary="Qualification " />
         <Typography >
-        { ""}
+        { sav &&  sav.qualification}
       </Typography>
       </ListItem>
       <ListItem >
         <ListItemText id="switch-list-label-wifi" primary="Comentaire" />
         <Typography >
-        { "" } 
+        { sav &&  sav.comment} 
       </Typography>
       </ListItem>
     </List>

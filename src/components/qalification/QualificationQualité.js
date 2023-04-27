@@ -4,31 +4,40 @@ import { Android12Switch } from "../../style/switch";
 import {  FormControl, FormControlLabel, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import { Headphones } from "@mui/icons-material";
+import { updateContractQte } from "../../functions/contract";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
-const initialQualification = [ "Aucun(e)",'conforme', 'non conforme', 'annulation', 'SAV'];
+const initialQualification = [ "aucun(e)",'conforme', 'non conforme', 'annulation', 'SAV'];
 
-const QualificationQualité = () => {
-
+const QualificationQualité = ({data}) => {
+  const {slug, energie} = useParams()
+  const {user} = useSelector((state) => ({...state}))
+  
     const [qualificationsQté , setQualificaionsQté] = useState({
       switchState : {
-        Appel_enregistré: false,
-        _14j_de_rétractation: false,
-        Autorisation_accès_GRD: false,
-        Inscription_Bloctel: false,
-        Valider_les_coordonnées_du_client: false,
-        Expliquer_que_nous_sommes_KOMPAR: false,
-        Explication_changement_de_fournisseur: false,
-        Discours_frauduleux_mensenger: false,
-        MES_non_conforme: false,
-        non_conformité_signature_recap: false,
-        Validation_à_la_place_du_prospect: false,
-        Comportement_général: false,
-        Mineur_trop_âgée_non_lucide: false,
-        IBAN_invalide: false,
+        Appel_enregistré: data.values.Appel_enregistré ?? false,
+        _14j_de_rétractation: data.values._14j_de_rétractation ?? false,
+        Autorisation_accès_GRD: data.values.Autorisation_accès_GRD ?? false,
+        Inscription_Bloctel: data.values.Inscription_Bloctel ?? false,
+        Valider_les_coordonnées_du_client: data.values.Valider_les_coordonnées_du_client ?? false,
+        Expliquer_que_nous_sommes_KOMPAR: data.values.Expliquer_que_nous_sommes_KOMPAR ?? false,
+        Explication_changement_de_fournisseur: data.values.Explication_changement_de_fournisseur ?? false,
+        Discours_frauduleux_mensenger: data.values.Discours_frauduleux_mensenger ?? false,
+        MES_non_conforme: data.values.MES_non_conforme ?? false,
+        non_conformité_signature_recap: data.values.non_conformité_signature_recap ?? false,
+        Validation_à_la_place_du_prospect: data.values.Validation_à_la_place_du_prospect ?? false,
+        Comportement_général: data.values.Comportement_général ?? false,
+        Mineur_trop_âgée_non_lucide: data.values.Mineur_trop_âgée_non_lucide ?? false,
+        IBAN_invalide: data.values.IBAN_invalide ?? false,
       },
-      comment : "",
-      qualification : '',
+      comment :  data.comment ?? '',
+      qualification : data.qualification ?? '',
     })
+    const [open, setOpen] = useState(false);
+   
+
     const handleChange = (event) => {
        setQualificaionsQté({
         ...qualificationsQté,
@@ -55,9 +64,64 @@ const QualificationQualité = () => {
     };
 
     useEffect(() => {
-      
-      console.log(qualificationsQté)
-    }, [qualificationsQté]);
+      setQualificaionsQté(prevState => ({
+        ...prevState,
+        switchState: {
+          Appel_enregistré: data.values.Appel_enregistré ?? false,
+          _14j_de_rétractation: data.values._14j_de_rétractation ?? false,
+          Autorisation_accès_GRD: data.values.Autorisation_accès_GRD ?? false,
+          Inscription_Bloctel: data.values.Inscription_Bloctel ?? false,
+          Valider_les_coordonnées_du_client: data.values.Valider_les_coordonnées_du_client ?? false,
+          Expliquer_que_nous_sommes_KOMPAR: data.values.Expliquer_que_nous_sommes_KOMPAR ?? false,
+          Explication_changement_de_fournisseur: data.values.Explication_changement_de_fournisseur ?? false,
+          Discours_frauduleux_mensenger: data.values.Discours_frauduleux_mensenger ?? false,
+          MES_non_conforme: data.values.MES_non_conforme ?? false,
+          non_conformité_signature_recap: data.values.non_conformité_signature_recap ?? false,
+          Validation_à_la_place_du_prospect: data.values.Validation_à_la_place_du_prospect ?? false,
+          Comportement_général: data.values.Comportement_général ?? false,
+          Mineur_trop_âgée_non_lucide: data.values.Mineur_trop_âgée_non_lucide ?? false,
+          IBAN_invalide: data.values.IBAN_invalide ?? false,
+        },
+        comment: data.comment ?? '',
+        qualification: data.qualification ?? '',
+      }));
+    }, [data, slug,energie]);
+
+    const handleApply = (e) => {
+    e.preventDefault();
+    toast
+    .promise(updateContractQte(slug,energie, qualificationsQté, user.token), {
+      pending: {
+        render() {
+          return 'Updating Contract...';
+        },
+        icon: '🔄',
+        // You can also set the autoClose option to false to keep the toast open
+        // while the Promise is pending.
+      },
+      success: {
+        render() {
+          return 'Contract Updated Successfully!';
+        },
+        // other options
+        icon: '👍',
+      },
+      error: {
+        render({ data }) {
+          // When the Promise rejects, data will contain the error
+          return `Error: ${data.message}`;
+        },
+        // other options
+        icon: '❌',
+      },
+    })
+    .then((res) => {
+     setOpen(false)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
     const content =  
     <Grid container spacing={2} sx={{mt:1}} >
@@ -70,7 +134,7 @@ const QualificationQualité = () => {
     gutterBottom
     sx={{ fontWeight: 600 }}
     >
-    A respecter impérativement
+    A respecter impérativement 
     </Typography>
     <Stack>
     <FormControlLabel
@@ -190,6 +254,11 @@ return (
     buttonText = "Qualité"
     title="Qualité"
     text={content}
+    handleApply={handleApply}
+    data={data}
+    setOpen={setOpen}
+    open={open}
+
   />
 )
 }

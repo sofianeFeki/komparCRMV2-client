@@ -5,6 +5,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import { useMemo } from 'react';
 
 
 
@@ -20,14 +21,13 @@ export const usersColumns = [
       flex: 1.4,
     },
     {
-      field: 'Email',
+      field: 'email',
       headerName: 'Email',
       flex: 1.4,
-      valueGetter: (params) =>
-        `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+   
     },
     {
-      field: 'Role',
+      field: 'role',
       headerName: 'Role',
       flex: 1,
     },
@@ -183,7 +183,7 @@ export  const contractCreateColumns = [
       flex : 0.4
     },
     {
-      field: 'Énergie',
+      field: 'energie',
       headerName: 'Energie',
       flex : 0.3
     },
@@ -207,7 +207,7 @@ export  const contractCreateColumns = [
       flex : 0.3
     },
     {
-      field: 'StatutSav',
+      field: 'StatutWc',
       headerName: 'Statut Wc',
       flex : 0.3
     },
@@ -228,8 +228,7 @@ export  const contractCreateColumns = [
           icon={<VisibilityIcon />}
           label="open"
           component={Link}
-          to={`/contract-details/${params.row.contratRef}`}
-          //onClick={() => console.log(params.row.clientRef)}
+          to={`/contract-details/${params.row.clientRef}/${params.row.energie}`}          //onClick={() => console.log(params.row.clientRef)}
         />,
        
         <GridActionsCellItem
@@ -302,6 +301,118 @@ export  const contractCreateColumns = [
           showInMenu
         />
         
+      ],
+    },
+  ];
+
+
+  export const savCulumns =  [
+    {
+      field: 'clientRef',
+      headerName: 'Ref client',
+      flex : 0.4
+    },
+    {
+      field: 'date_de_la_signature',
+      headerName: 'Date de signature',
+      flex : 0.4,
+      valueFormatter: ({ value }) => moment(new Date(value)).format('DD/MM/YYYY ')
+
+    },
+    {
+      field: 'Contact',
+      headerName: 'Contact',
+      flex : 0.4,
+      valueGetter: (params) =>
+      `${params.row.Civility || ''} ${params.row.Prénom || ''} ${params.row.Nom || ''}`,
+    },
+    {
+      field: 'Fournisseur',
+      headerName: 'Fournisseur',
+      flex : 0.3
+    },
+    {
+      field: 'energie',
+      headerName: 'Energie',
+      flex : 0.3
+    },
+    {
+      field: 'Nom_du_partenaire',
+      headerName: 'Partenaire',
+      flex : 0.4
+    },
+  
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      type: 'actions',
+      flex : 0.2,
+      getActions: (params) => [
+        
+        <GridActionsCellItem
+        icon={<VisibilityIcon />}
+        label="open"
+        component={Link}
+        to={`/contract-details/${params.row.clientRef}/${params.row.energie}`}
+      />,
+       
+       
+      ],
+    },
+  ];
+
+
+  export const wcCulumns =  [
+    {
+      field: 'clientRef',
+      headerName: 'Ref client',
+      flex : 0.4
+    },
+    {
+      field: 'date_de_la_signature',
+      headerName: 'Date de signature',
+      flex : 0.4,
+      valueFormatter: ({ value }) => moment(new Date(value)).format('DD/MM/YYYY ')
+
+    },
+    {
+      field: 'Contact',
+      headerName: 'Contact',
+      flex : 0.4,
+      valueGetter: (params) =>
+        `${params.row.Civility || ''} ${params.row.Prénom || ''} ${params.row.Nom || ''}`,
+    },
+    {
+      field: 'Fournisseur',
+      headerName: 'Fournisseur',
+      flex : 0.3
+    },
+    {
+      field: 'energie',
+      headerName: 'Energie',
+      flex : 0.3
+    },
+    {
+      field: 'Nom_du_partenaire',
+      headerName: 'Partenaire',
+      flex : 0.4
+    },
+  
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      type: 'actions',
+      flex : 0.2,
+      getActions: (params) => [
+        
+        <GridActionsCellItem
+        icon={<VisibilityIcon />}
+        label="open"
+        component={Link}
+        to={`/contract-details/${params.row.clientRef}/${params.row.energie}`}
+      />,
+       
+       
       ],
     },
   ];

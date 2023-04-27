@@ -6,16 +6,17 @@ import {  GridActionsCellItem } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import { Link, useNavigate } from 'react-router-dom';
-import { getQtéRows, getReservation } from '../../functions/contract';
+import { getFilters, getQtéRows, getReservation } from '../../functions/contract';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 
 
 const Quality = () => {
 
 
-  const { drawer, user } = useSelector((state) => ({ ...state }));
+  const { drawer, user, filters } = useSelector((state) => ({ ...state }));
 
   const [rows, setRows] = useState([]);
  
@@ -34,18 +35,31 @@ const Quality = () => {
 
 
 const loadContract = () => {
-  getQtéRows(paginationModel,sortOptions).then((c) => {
-    const { data, total } = c.data;
-    setRows(data);
-    setTotalRowCount(total);
-     });
-
+  setLoading(true);
+  
+  if (filters && filters.serverData !== null) { // check if filters exist and are not empty
+    getFilters(filters, paginationModel, sortOptions).then((response) => {
+      const filteredData = response.data;
+      const { data, total } = filteredData;
+      setRows(data);
+      setTotalRowCount(total);
+      setLoading(false);
+    });
+  } else {
+    getQtéRows(paginationModel, sortOptions).then((response) => {
+      const { data, total } = response.data;
+      setRows(data);
+      setTotalRowCount(total);
+      setLoading(false);
+    });
+  }
 };
+
 
 useEffect(() => {
   loadContract();
-  console.log(rows)
-}, [paginationModel, sortOptions , user]);
+  console.log(filters);
+}, [paginationModel, sortOptions, filters , totalRowCount]);
 
   const qualityCulumns = useMemo(() => [
     {
@@ -56,7 +70,8 @@ useEffect(() => {
     {
       field: 'date_de_la_signature',
       headerName: 'Date de signature',
-      flex : 0.4
+      flex : 0.4,
+      valueFormatter: ({ value }) => moment(new Date(value)).format('DD/MM/YYYY ')
 
     },
     {
@@ -64,7 +79,7 @@ useEffect(() => {
       headerName: 'Contact',
       flex : 0.4,
       valueGetter: (params) =>
-        `${params.row.Civility || ''} ${params.row.Prénom || ''} ${params.row.Nom || ''}`,
+      `${params.row.Civility || ''} ${params.row.Prénom || ''} ${params.row.Nom || ''}`,
     },
     {
       field: 'Fournisseur',

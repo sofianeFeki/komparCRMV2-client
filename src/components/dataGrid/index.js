@@ -20,11 +20,13 @@ import {  Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Filters from './filters';
 import Export from './export';
 import { CustomNoRowsOverlay } from '../../style/dataGrid';
 import { darken, lighten, styled } from '@mui/material/styles';
+import LinearProgress from '@mui/material/LinearProgress';
+
 
 const getBackgroundColor = (color, mode) =>
   mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
@@ -88,7 +90,7 @@ const theme = createTheme(frFR);
           variant="outlined"
           shape="rounded"
           page={page + 1}
-          count={pageCount}
+          count={ Math.ceil(totalRowCount / 20)}
           renderItem={(props2) => <PaginationItem {...props2} disableRipple />}
           onChange={(event, value) => apiRef.current.setPage(value - 1)}
         />
@@ -112,12 +114,12 @@ function CustomToolbar() {
 
 export const DataTable = ({ rows ,columns, paginationModel,setPaginationModel, sortOptions, setSortOptions,loading, totalRowCount }) => {
 
-
+const {quickFilter} = useSelector((state) => ({...state}))
  
 
+const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
 
-  useEffect(() => {
-  })
+
 
   const getRowSpacing = useCallback((params) => {
     return {
@@ -145,6 +147,18 @@ export const DataTable = ({ rows ,columns, paginationModel,setPaginationModel, s
     setSortOptions({ sortModel: [...sortModel] });
   }, []);
 
+  // const [rowCountState, setRowCountState] = useState(
+  //   totalRowCount || 0,
+  // );
+
+  // useEffect(() => {
+  //   setRowCountState((prevRowCountState) =>
+  //     totalRowCount !== undefined
+  //       ? totalRowCount
+  //       : prevRowCountState,
+  //   );
+  // }, [totalRowCount, setRowCountState]);
+
   return (
     <Box>
       <Typography variant="h5" sx={{ m: 2, fontWeight: 700 }}>
@@ -164,18 +178,21 @@ export const DataTable = ({ rows ,columns, paginationModel,setPaginationModel, s
             paginationModel={paginationModel}
             loading={loading}
             paginationMode="server"
+            sortingMode="server"
             onPaginationModelChange={setPaginationModel}
             onSortModelChange={handleSortModelChange}
             rowCount={totalRowCount}
-            getRowClassName={(params) => `super-app-theme--${params.row.StatutQté}`}
-
+            getRowClassName={(params) => `super-app-theme--${ params.row.StatutWc} super-app-theme--${params.row.StatutQté} ` }
             slots={{
               toolbar: CustomToolbar,
               noRowsOverlay: CustomNoRowsOverlay,
+              loadingOverlay: LinearProgress,
+              footer : CustomFooter
+
             }}
             getRowSpacing={getRowSpacing}
             disableRowSelectionOnClick
-            getRowId={(row) => row.contratRef}
+            getRowId={(row) => row.contratRef || row._id}
             sx={{
               m: 2,
               boxShadow: 3,
@@ -197,7 +214,14 @@ export const DataTable = ({ rows ,columns, paginationModel,setPaginationModel, s
                     field: 'date_de_la_signature',
                     sort: 'desc',
                   },
+                  
                 ],
+              },
+              filter: {
+                filterModel: {
+                  items: [],
+                  quickFilterValues: filterValue ,
+                },
               },
             }}
           />

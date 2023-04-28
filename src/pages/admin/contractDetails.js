@@ -67,7 +67,7 @@ const ContractDetails = () => {
         {quality ? <QualificationQualité data={quality} /> : null}
         {wc ? <QualificationWc data={wc} /> : null}
         {sav ? <QualificationSav data={sav} /> : null}
-  <Button variant="outlined" size="small" sx={{backgroundColor : 'white'}}>retour</Button>
+  <Button variant="outlined" component={Link} to='/admin' size="small" sx={{backgroundColor : 'white'}}>retour</Button>
 </Stack>
 </Box>
       <Grid container spacing={2} sx={{ mt: 2 }} >

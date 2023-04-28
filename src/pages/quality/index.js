@@ -16,7 +16,9 @@ import moment from 'moment';
 const Quality = () => {
 
 
-  const { drawer, user, filters } = useSelector((state) => ({ ...state }));
+  const { drawer, user } = useSelector((state) => ({ ...state }));
+  const serverData = useSelector(state => state.filters.serverData);
+
 
   const [rows, setRows] = useState([]);
  
@@ -37,14 +39,12 @@ const Quality = () => {
 const loadContract = () => {
   setLoading(true);
   
-  if (filters && filters.serverData !== null) { // check if filters exist and are not empty
-    getFilters(filters, paginationModel, sortOptions).then((response) => {
-      const filteredData = response.data;
-      const { data, total } = filteredData;
-      setRows(data);
-      setTotalRowCount(total);
-      setLoading(false);
-    });
+  if (serverData && serverData.data !== null) { // check if filters exist and are not empty
+    const { data, total } = serverData;
+        setRows(data);
+        setTotalRowCount(total);
+        setLoading(false);
+    
   } else {
     getQtéRows(paginationModel, sortOptions).then((response) => {
       const { data, total } = response.data;
@@ -58,8 +58,7 @@ const loadContract = () => {
 
 useEffect(() => {
   loadContract();
-  console.log(filters);
-}, [paginationModel, sortOptions, filters , totalRowCount]);
+}, [serverData, paginationModel, sortOptions]);
 
   const qualityCulumns = useMemo(() => [
     {

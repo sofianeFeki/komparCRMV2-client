@@ -33,8 +33,7 @@ import {
   import { grey } from '@mui/material/colors';
   import ExpandLess from '@mui/icons-material/ExpandLess';
   import ExpandMore from '@mui/icons-material/ExpandMore';
-import { ThemeProvider } from '@emotion/react';
-import baseTheme from '../../style/theme';
+
   
   const SideList = () => {
     const { user, drawer } = useSelector((state) => ({ ...state }));
@@ -84,9 +83,23 @@ import baseTheme from '../../style/theme';
     const handleItemClick = () => {
       setOpenItem(!openItem);
     };
+
+    const filteredList = useMemo(() => {
+      if (user && user.role === 'admin') {
+        return list;
+      } else if (user && user.role === 'sav') {
+        return list.filter((item) => item.title === 'SAV');
+      } else if (user && user.role === 'wc') {
+        return list.filter((item) => item.title === 'welcome call');
+      } else if (user && user.role === 'quality') {
+        return list.filter((item) => item.title === 'Quality');
+      } else {
+        return [];
+      }
+    }, [user, list]);
+
     return (
       <div>
-        <ThemeProvider theme={baseTheme}>
         <Drawer variant="permanent" open={drawer}>
           <DrawerHeader>
             <IconButton onClick={handleClose}>
@@ -96,7 +109,9 @@ import baseTheme from '../../style/theme';
           <Divider />
   
           <List >
-            <ListItemButton onClick={handleItemClick}>
+          {user && (user.role === 'admin' ) ? (
+<>
+<ListItemButton onClick={handleItemClick}>
               <ListItemIcon>
                 <Dashboard />
               </ListItemIcon>
@@ -105,39 +120,112 @@ import baseTheme from '../../style/theme';
             </ListItemButton>
             <Collapse in={openItem} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }} onClick={() => history('/admin')}>
-                  <ListItemIcon>
+                <ListItemButton sx={{
+                    pl: 5.5,
+                    minHeight: 48,
+                    justifyContent: drawer ? 'initial' : 'center',
+                    '&.Mui-selected': {
+                      backgroundColor: grey[200],
+                    },
+                    '&.Mui-focusVisible': {
+                      backgroundColor: grey[200],
+                    },
+                    }} 
+                    onClick={() => history('/admin')}
+                    selected={location.pathname === '/admin'}
+                    >
+                  <ListItemIcon  sx={{
+                      color: location.pathname === '/admin' ? 'black' : 'auto',
+                    }} >
                     <Feed />
                   </ListItemIcon>
-                  <ListItemText primary="Suivi des ventes" />
+                  <ListItemText primary="Suivi des ventes" sx={{
+                      opacity: drawer ? 1 : 0,
+                      color: location.pathname === '/admin' ? 'black' : 'auto',
+                    }} />
                 </ListItemButton>
                 <ListItemButton
-                  sx={{ pl: 4 }}
                   onClick={() => history('/admin/contract-create')}
+                  selected={location.pathname === '/admin/contract-create'}
+                  sx={{
+                    pl: 5.5,
+                    minHeight: 48,
+                    justifyContent: drawer ? 'initial' : 'center',
+                    '&.Mui-selected': {
+                      backgroundColor: grey[200],
+                    },
+                    '&.Mui-focusVisible': {
+                      backgroundColor: grey[200],
+                    },
+                  
+                  }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon  sx={{
+                      color: location.pathname === '/admin/contract-create' ? 'black' : 'auto',
+                    }}>
                     <PostAdd />
                   </ListItemIcon>
-                  <ListItemText primary="Nouveaux contrats" />
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }} onClick={() => history('/stats')}>
-                  <ListItemIcon>
+                  <ListItemText primary="Nouveaux contrats" sx={{
+                      opacity: drawer ? 1 : 0,
+                      color: location.pathname === '/admin/contract-create' ? 'black' : 'auto',
+                    }}  />
+                </ListItemButton >
+                <ListItemButton  sx={{
+                    pl: 5.5,
+                    minHeight: 48,
+                    justifyContent: drawer ? 'initial' : 'center',
+                    '&.Mui-selected': {
+                      backgroundColor: grey[200],
+                    },
+                    '&.Mui-focusVisible': {
+                      backgroundColor: grey[200],
+                    },
+                    }} 
+                    onClick={() => history('/stats')}
+                    selected={location.pathname === '/stats'} >
+                  <ListItemIcon  sx={{
+                      color: location.pathname === '/stats' ? 'black' : 'auto',
+                    }}>
                     <Troubleshoot />
                   </ListItemIcon>
-                  <ListItemText primary="Statistique" />
+                  <ListItemText primary="Statistique" sx={{
+                      opacity: drawer ? 1 : 0,
+                      color: location.pathname === '/stats' ? 'black' : 'auto',
+                    }} />
                 </ListItemButton>
                 <ListItemButton
-                  sx={{ pl: 4 }}
+                 sx={{
+                  pl: 5.5,
+                  minHeight: 48,
+                  justifyContent: drawer ? 'initial' : 'center',
+                  '&.Mui-selected': {
+                    backgroundColor: grey[200],
+                  },
+                  '&.Mui-focusVisible': {
+                    backgroundColor: grey[200],
+                  },
+                  }} 
                   onClick={() => history('/admin/users')}
+                 selected={location.pathname === '/admin/users'}              
                 >
-                  <ListItemIcon>
+                  <ListItemIcon  sx={{
+                      color: location.pathname === '/admin/users' ? 'black' : 'auto',
+                    }}> 
                     <ManageAccounts />
                   </ListItemIcon>
-                  <ListItemText primary="Users" />
+                  <ListItemText primary="Users" sx={{
+                      opacity: drawer ? 1 : 0,
+                      color: location.pathname === '/admin/users' ? 'black' : 'auto',
+                    }} />
                 </ListItemButton>
               </List>
             </Collapse>
-            {list.map((item) => (
+</>
+
+) : null}
+
+            
+            {filteredList.map((item) => (
               <ListItem key={item.title} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
@@ -198,7 +286,6 @@ import baseTheme from '../../style/theme';
             </Tooltip>
           </Box>
         </Drawer>
-        </ThemeProvider>
       </div>
     );
   };

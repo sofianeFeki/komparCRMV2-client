@@ -132,6 +132,8 @@ const QualificationWc = ({data}) => {
 </FormControl>
 </Stack>
 return (
+  <>
+    {user && (user.role === 'admin' || user.role === 'wc') ? (
     <DraggableDialog
     variant = 'contained'
     startIcon = ''
@@ -144,6 +146,8 @@ return (
   open={open}
 
   />
+  ) : null}
+  </>
 )
 }
 

@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-
-const API_BASE_URL = "https://komparcrm-server.onrender.com/api";
-
+const API_BASE_URL = process.env.REACT_APP_API;
 
 export const createOrUpdateUser = async (authtoken) => {
   return await axios.post(

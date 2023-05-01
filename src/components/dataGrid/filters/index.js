@@ -7,7 +7,7 @@ import * as locales from 'react-date-range/dist/locale';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { getFilters } from '../../../functions/contract';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const  intialState = {
   partenaires: ['Kompar_TV_KE40', 'Kompar_TV_KE24', 'Kompar_TV_KE27', 'Kompar_TV_KE42', 'Kompar_TV_KE31', 'Kompar_TV_KE41', 'Kompar Energie 21', 'Kompar_TV_KE39', 'Kompar_TV_KE30', 'Kompar_TV_KE34', 'Kompar Energie 00', 'Kompar Energie 01', 'Kompar_TV_KE20', 'Kompar_TV_KE35', 'Kompar_TV_KE33', 'Kompar_TV_KE23', 'Kompar energie 26', 'Kompar_TV_KE14', 'Kompar_TV_KE32', 'Kompar_TV_KE37', 'kompar energie 29', 'Kompar_TV_KE38', 'kompar energie 28', 'Kompar_TV_KE36'],
@@ -21,82 +21,77 @@ export const Filters = () => {
   const dispatch = useDispatch()
 
   const [open, setOpen] = useState(false);
+
+
   
-  
-    const [serverFilters, setServerFilters] = useState({
-      partenaire: '',
-      qualificationQté: '',
-      qualificationWc: '',
-      fournisseur: '',
-      date : [
-        {
-          startDate: new Date(),
-          endDate: null,
-          key: 'selection'
-        }
-      ],
-    });
+  const {filters, user} = useSelector((state) => ({...state}));
+
+  const { paginationModel, sortOptions } = useSelector(
+    (state) => state.paginationAndSortReducer
+  );
+
     const [filterCount, setFilterCount] = useState(0);
 
   
     const handleApply = () => {
-      getFilters(serverFilters).then((c) => {
-        console.log("filters", c.data);
-        dispatch({ type: 'SET_FILTERS', payload: serverFilters });
+      getFilters(filters, paginationModel, sortOptions).then((c) => {
+        //console.log("filters", c.data);
+        dispatch({ type: 'SET_FILTERS', payload: filters });
         dispatch({ type: 'SET_SERVER_DATA', payload: c.data });
         setOpen(false)
       });
     };
     
   
+    useEffect(() => {
+      if (filters.serverData && filters.serverData.data !== null) {
+        handleApply();
+      }
+    }, [paginationModel, sortOptions]);
 
     useEffect(() => {
-      dispatch({
-        type: 'SET_SERVER_FILTERS',
-        payload: serverFilters,
-      });
-
+     // handleApply()
       let count = 0;
-      for (const key in serverFilters) {
-        if (key === "date") {
-          if (serverFilters.date[0].startDate !== null && serverFilters.date[0].endDate !== null) {
+      for (const key in filters) {
+        if (key === 'date') {
+          if (
+            filters.date[0].startDate !== null &&
+            filters.date[0].endDate !== null
+          ) {
             count++;
           }
-        } else if (serverFilters[key] !== '' && serverFilters[key] !== null) {
+        } else if (key !== 'serverData' && key !== 'serverFilters' && filters[key] !== '' && filters[key] !== null) {
           count++;
         }
       }
       setFilterCount(count);
-    }, [serverFilters]);
-
+      console.log("lalalalalala", paginationModel, sortOptions );   
+    }, [filters, paginationModel, sortOptions]);
+    
 
     const handleChange = (e) => {
-      setServerFilters({ ...serverFilters, [e.target.name]: e.target.value });
-
-    };
-    const handleDateChange = (item) => {
-      setServerFilters((prevFilters) => ({
-        ...prevFilters,
-        date: [item.selection]
-      }));  }
-
-    const handleReset = () => {
-      setServerFilters({
-        partenaire: '',
-        qualificationQté: '',
-        qualificationWc: '',
-        fournisseur: '',
-        date :  [
-          {
-            startDate: new Date(),
-            endDate: null,
-            key: 'selection'
-          }
-        ]
+      dispatch({
+        type: 'SET_FILTERS',
+        payload: { [e.target.name]: e.target.value }
       });
-      dispatch({ type: 'RESET_FILTERS' });
+      //console.log(filters)
 
     };
+  
+    const handleDateChange = (item) => {
+      dispatch({
+        type: 'SET_FILTERS',
+        payload: { date: [item.selection] }
+      });
+      console.log(item.selection)
+    };
+  
+    const handleReset = () => {
+      dispatch({ type: 'RESET_FILTERS' });
+    };
+  
+    // use filters, handleChange, handleDateChange, and handleReset here
+ 
 
 
  const content = 
@@ -108,7 +103,7 @@ export const Filters = () => {
   id="demo-simple-select"
   label="fournisseur"
   onChange={handleChange}
-  value={serverFilters.fournisseur}
+  value={filters?.fournisseur || ''}
   name='fournisseur'
 >
   {intialState.fournisseurs.map((option) => (
@@ -126,7 +121,7 @@ export const Filters = () => {
   labelId="demo-simple-select-label"
   id="demo-simple-select"
   label="Partenaire"
-  value={serverFilters.partenaire}
+  value={filters?.partenaire || ''}
   name='partenaire'
   onChange={handleChange}
 >
@@ -136,7 +131,7 @@ export const Filters = () => {
     </MenuItem>
   ))}
 </Select>
-</FormControl>
+</FormControl> 
 
 
 <FormControl fullWidth size='small'>
@@ -145,7 +140,7 @@ export const Filters = () => {
   labelId="demo-simple-select-label"
   id="demo-simple-select"
   label="Qualification Qté"
-  value={serverFilters.qualificationQté}
+  value={filters?.qualificationQté || ''}
   name='qualificationQté'
   onChange={handleChange}
 >
@@ -164,7 +159,7 @@ export const Filters = () => {
   labelId="demo-simple-select-label"
   id="demo-simple-select"
   label="Qualification Wc"
-  value={serverFilters.qualificationWc}
+  value={filters?.qualificationWc || ''}
   name='qualificationWc'
   onChange={handleChange}
 >
@@ -180,26 +175,37 @@ export const Filters = () => {
   editableDateInputs={true}
   onChange={handleDateChange}
   moveRangeOnFirstSelection={false}
-  ranges={serverFilters.date}
+  ranges={filters?.date || [
+    {
+      startDate: new Date(),
+      endDate: null,
+      key: 'selection'
+    }
+  ]}
   showSelectionPreview={true}
   locale={locales['fr']}
 />
 </Stack>
-  return (
-    
-    <DraggableDialog
-      badgeContent = {filterCount}
-      startIcon = {<FilterAlt />  }
-      chipIcon = { filterCount > 0 ? <FilterAltOff /> : <FilterAlt   />}
-      buttonText = "Filtres"
-      title={filterCount > 0 ? "Effacer" : "Filtres"}
-      text={content}
-      handleReset={handleReset}
-      handleApply={handleApply}
-      open={open}
-      setOpen={setOpen}
-    />
-  );
+return (
+  <>
+    {user && (user.role === 'admin' || user.role === 'quality') ? (
+      <DraggableDialog
+        badgeContent={filterCount}
+        startIcon={<FilterAlt />}
+        chipIcon={filterCount > 0 ? <FilterAltOff /> : <FilterAlt />}
+        buttonText="Filtres"
+        title={filterCount > 0 ? 'Effacer' : 'Filtres'}
+        text={content}
+        handleReset={handleReset}
+        handleApply={handleApply}
+        open={open}
+        setOpen={setOpen}
+      />
+    ) : null}
+  </>
+);
+
+
 };
 
 export default Filters;

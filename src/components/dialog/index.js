@@ -10,6 +10,7 @@ import { Badge, Chip } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import baseTheme from '../../style/theme';
 import { ThemeProvider } from '@emotion/react';
+import { useSelector } from 'react-redux';
 
 
 function PaperComponent(props) {
@@ -26,6 +27,9 @@ function PaperComponent(props) {
 
 const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeContent, chipIcon, handleReset, handleApply, open, setOpen }) => {
 
+  const darkMode = useSelector((state) => state.darkMode.darkMode);
+
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -36,7 +40,6 @@ const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeCon
 
   return (
     <div>
-        <ThemeProvider theme={baseTheme} >
       <Badge badgeContent={badgeContent} color="primary">
         <Button
           onClick={handleClickOpen}
@@ -57,7 +60,7 @@ const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeCon
         <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         <Chip icon={chipIcon} label={title} sx={{fontWeight : 600}}  onClick={handleReset} />    
         </DialogTitle>
-        <DialogContent sx={{  backgroundColor : grey[100]  }}>
+        <DialogContent sx={{  backgroundColor : darkMode ? grey[800]  : grey[100]  }}>
           {text}
         </DialogContent>
         <DialogActions sx={{m:2}}>
@@ -67,7 +70,6 @@ const DraggableDialog = ({ title, text, buttonText, startIcon, variant, badgeCon
           <Button onClick={handleApply} variant='contained' size='small'>Appliquer</Button>
         </DialogActions>
       </Dialog>
-      </ThemeProvider>
     </div>
   );
 };

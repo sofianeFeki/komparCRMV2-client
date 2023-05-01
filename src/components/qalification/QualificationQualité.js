@@ -247,7 +247,10 @@ const QualificationQualité = ({data}) => {
     </Grid>
   </Grid>     
 return (
-    <DraggableDialog
+  <>
+      {user && (user.role === 'admin' || user.role === 'quality') ? (
+
+   <DraggableDialog
     variant = 'contained'
     startIcon = ''
     chipIcon = {<Headphones />}
@@ -260,6 +263,9 @@ return (
     open={open}
 
   />
+  ) : null}
+  </>
+   
 )
 }
 

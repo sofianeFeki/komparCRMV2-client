@@ -39,11 +39,12 @@ export const createContract = async (contract, authtoken) =>
   });
   //       ------------------ CONTRACT FILTERS ------------------
 
-  export const getFilters = async (serverFilters,  paginationModel, sortOptions) =>
+  export const getFilters = async (serverFilters,  paginationModel, sortOptions, quickFilter) =>
   await axios.post(`${API_BASE_URL}/Filters/`,  {
     serverFilters,
     paginationModel,
-   sortOptions
+   sortOptions,
+   quickFilter
   });
 
   export const getquickFilters = async (quickFilter) =>

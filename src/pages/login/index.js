@@ -39,9 +39,26 @@ const Login = () => {
 
   const { user } = useSelector((state) => ({ ...state }));
 
-  useEffect(() => {
-    if (user && user.token) history('/admin');
-  }, [user, history]);
+  const roleBasedRedirect = (res) => {
+    if (res.data.role === 'admin') {
+      history('/admin');
+    }
+    if (res.data.role === 'quality') {
+      history('/quality');
+    }
+    if (res.data.role === 'wc') {
+      history('/welcome-call');
+    }
+    if (res.data.role === 'backOffice') {
+      history('back-office');
+    }
+    if (res.data.role === 'support') {
+      history('/support');
+    }
+    if (res.data.role === 'sav') {
+      history('/sav');
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,6 +87,8 @@ const Login = () => {
             },
           });
           setLoading(false);
+          roleBasedRedirect(res);
+
         })
         .catch((err) => alert(err));
     } catch (error) {

@@ -10,28 +10,26 @@ import { getFilters, getQtéRows, getReservation } from '../../functions/contrac
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { toast } from 'react-toastify';
 import moment from 'moment';
+import { grey } from '@mui/material/colors';
 
 
 
 const Quality = () => {
 
 
-  const { drawer, user } = useSelector((state) => ({ ...state }));
+  const { drawer, quickFilter, user  } = useSelector((state) => ({ ...state }));
+  const history = useNavigate()
   const serverData = useSelector(state => state.filters.serverData);
-
+  const darkMode = useSelector((state) => state.darkMode.darkMode);
 
   const [rows, setRows] = useState([]);
- 
-  const history = useNavigate()
-
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 20,
-  });
-
-  const [sortOptions, setSortOptions] = useState([ { field: 'date_de_la_signature', sort: 'desc' } ]);
   const [loading, setLoading] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
+
+  const { paginationModel, sortOptions } = useSelector(
+    (state) => state.paginationAndSortReducer
+  );
+
 
   
 
@@ -46,9 +44,10 @@ const loadContract = () => {
         setLoading(false);
     
   } else {
-    getQtéRows(paginationModel, sortOptions).then((response) => {
+    getQtéRows(paginationModel, sortOptions, quickFilter.text).then((response) => {
       const { data, total } = response.data;
       setRows(data);
+      console.log("after set",rows)
       setTotalRowCount(total);
       setLoading(false);
     });
@@ -58,7 +57,7 @@ const loadContract = () => {
 
 useEffect(() => {
   loadContract();
-}, [serverData, paginationModel, sortOptions]);
+}, [serverData, paginationModel, sortOptions, quickFilter.text ]);
 
   const qualityCulumns = useMemo(() => [
     {
@@ -213,11 +212,11 @@ useEffect(() => {
 
 
   return (
-    <MainContainer open={drawer}>
-      <DataTable rows={rows} columns={qualityCulumns} paginationModel={paginationModel} 
-      setPaginationModel={setPaginationModel} sortOptions={sortOptions} setSortOptions={setSortOptions}
+    <MainContainer open={drawer} sx={{backgroundColor : darkMode ? "auto"  : grey[100] }}>
+      <DataTable rows={rows} columns={qualityCulumns}  
+   
       loading={loading} setLoadng={setLoading} 
-      totalRowCount={totalRowCount} setToatalRowCont={setTotalRowCount} page={paginationModel.page} />
+      totalRowCount={totalRowCount} setToatalRowCont={setTotalRowCount}  />
     </MainContainer>
   );
 };

@@ -114,6 +114,9 @@ const QualificationSav = ({data}) => {
 
 </Stack>
 return (
+  <>
+    {user && (user.role === 'admin' || user.role === 'sav') ? (
+
     <DraggableDialog
     variant = 'contained'
     startIcon = ''
@@ -125,6 +128,8 @@ return (
     setOpen={setOpen}
     open={open}
   />
+  ) : null}
+  </>
 )
 }
 

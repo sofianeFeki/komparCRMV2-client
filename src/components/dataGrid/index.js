@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import {
   DataGrid,
@@ -16,10 +16,10 @@ import {
 } from '@mui/x-data-grid';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
-import {  Typography } from '@mui/material';
+import {  ThemeProvider, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import Filters from './filters';
 import Export from './export';
@@ -42,7 +42,10 @@ const getSelectedHoverBackgroundColor = (color, mode) =>
 
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
- 
+
+  '& ': {
+    backgroundColor: theme.palette.mode === 'light' ? 'white' : 'auto',
+  },
   '& .super-app-theme--annulation': {
     backgroundColor: getBackgroundColor(
       theme.palette.error.main,
@@ -77,7 +80,7 @@ const theme = createTheme(frFR);
  function CustomFooter() {
     const apiRef = useGridApiContext();
     const page = useGridSelector(apiRef, gridPageSelector);
-    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+    //const pageCount = useGridSelector(apiRef, gridPageCountSelector);
     const totalRowCount = useGridSelector(apiRef, gridRowCountSelector);
   
     return (
@@ -112,10 +115,13 @@ function CustomToolbar() {
   );
 }
 
-export const DataTable = ({ rows ,columns, paginationModel,setPaginationModel, sortOptions, setSortOptions,loading, totalRowCount }) => {
+export const DataTable = ({ rows ,columns,loading, totalRowCount }) => {
 
 const {quickFilter} = useSelector((state) => ({...state}))
  
+const { paginationModel, sortOptions } = useSelector(
+  (state) => state.paginationAndSortReducer
+);
 
 const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
 
@@ -142,10 +148,7 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
     [dispatch]
   );
 
-  const handleSortModelChange = useCallback((sortModel) => {
-    // Here you save the data you need from the sort model
-    setSortOptions({ sortModel: [...sortModel] });
-  }, []);
+ 
 
   // const [rowCountState, setRowCountState] = useState(
   //   totalRowCount || 0,
@@ -170,7 +173,8 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
           width: '100%',
         }}
       >
-        <ThemeProvider theme={theme}>
+                <ThemeProvider theme={theme}>
+
           <StyledDataGrid
             rows={rows}
             columns={columns}
@@ -179,8 +183,19 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
             loading={loading}
             paginationMode="server"
             sortingMode="server"
-            onPaginationModelChange={setPaginationModel}
-            onSortModelChange={handleSortModelChange}
+            onPaginationModelChange={(newPaginationModel) =>
+              dispatch({
+                type: 'SET_PAGINATION_MODEL',
+                payload: newPaginationModel,
+              })
+            }
+            sortModel={sortOptions}
+            onSortModelChange={(newSortModel) =>
+              dispatch({
+                type: 'SET_SORT_MODEL',
+                payload: newSortModel,
+              })
+            }
             rowCount={totalRowCount}
             getRowClassName={(params) => `super-app-theme--${ params.row.StatutWc} super-app-theme--${params.row.StatutQté} ` }
             slots={{
@@ -198,11 +213,13 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
               boxShadow: 3,
               border: 2,
               borderColor: grey[200],
-
+            
               
               [`& .${gridClasses['columnHeader']}`]: {
-                fontSize: 15
-              }
+                fontSize: 15,
+                
+              },
+             
             }}
 
             initialState={{
@@ -224,8 +241,9 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
                 },
               },
             }}
+            
           />
-        </ThemeProvider>
+          </ThemeProvider>
       </Box>
     </Box>
   );

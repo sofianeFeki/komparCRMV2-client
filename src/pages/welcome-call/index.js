@@ -4,12 +4,14 @@ import { DataTable } from '../../components/dataGrid';
 import { MainContainer } from '../../style/mainContainer';
 import { wcCulumns } from '../../components/dataGrid/columns';
 import { getWcRows } from '../../functions/contract';
+import { grey } from '@mui/material/colors';
 
-const rows = [];
 
 const WelcomeCall = () => {
 
   const { drawer, quickFilter } = useSelector((state) => ({ ...state }));
+  const darkMode = useSelector((state) => state.darkMode.darkMode);
+
 
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,7 @@ const WelcomeCall = () => {
   }, [quickFilter]);
 
   return (
-    <MainContainer open={drawer}>
+    <MainContainer open={drawer} sx={{backgroundColor : darkMode ? "auto"  : grey[100] }}>
       <DataTable rows={rows} columns={wcCulumns}  loading={loading} setLoadng={setLoading} 
  />
     </MainContainer>

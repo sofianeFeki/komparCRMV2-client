@@ -13,7 +13,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
 import { contractCreateColumns } from '../../components/dataGrid/columns';
 import * as XLSX from 'xlsx';
-import moment from 'moment';
 import { createContract } from '../../functions/contract';
 
 
@@ -22,6 +21,8 @@ import { createContract } from '../../functions/contract';
 
 const ContractCreate = () => {
   const { drawer, user } = useSelector((state) => ({ ...state }));
+  const darkMode = useSelector((state) => state.darkMode.darkMode);
+
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -123,7 +124,7 @@ const ContractCreate = () => {
   };
 
   return (
-    <MainContainer open={drawer}>
+    <MainContainer open={drawer} sx={{backgroundColor : darkMode ? "auto"  : grey[100] }}>
       <Box
         sx={{
           display: 'flex',
@@ -191,11 +192,7 @@ const ContractCreate = () => {
             boxShadow: 3,
             border: 2,
             borderColor: grey[200],
-
-            [`& .${gridClasses.row}`]: {
-              bgcolor: (theme) =>
-                theme.palette.mode === 'light' ? grey[100] : grey[900],
-            },
+           backgroundColor : darkMode ? "auto"  : "white"
           }}
         />
       </Box>

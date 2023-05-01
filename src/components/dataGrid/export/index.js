@@ -8,7 +8,7 @@ import { getContractsExport } from '../../../functions/contract';
 
 const Export = () => {
 
-  const {filters} = useSelector((state) => ({...state}))
+  const {filters, user} = useSelector((state) => ({...state}))
 
   const [loading, setLoading] = useState(false);
   const handleDownloadClick = () => {
@@ -26,8 +26,8 @@ const Export = () => {
           Civility: contract.Civility,
           Prénom: contract.Prénom,
           Nom: contract.Nom,
-          email: contract.email,
-          tel: contract.tel,
+          Email: contract.Email,
+          Tél: contract.Tél,
           mensualité: contract.mensualité,
           Adresse: contract.Adresse,
           CodePostal: contract.Code_postal,
@@ -63,7 +63,9 @@ const Export = () => {
   };
 
   return (
-    <div>
+    <>
+    {user && (user.role === 'admin') ? (
+
       <LoadingButton
         loading={loading}
         loadingPosition="start"
@@ -73,7 +75,8 @@ const Export = () => {
       >
         Exporter
       </LoadingButton>
-    </div>
+          ) : null}
+    </>
   );
 };
 

@@ -12,9 +12,17 @@ import {
 import { AppBarStyle } from '../../style/appbar';
 import SideList from './SideList';
 import { DrawerHeader } from '../../style/appbar/sideList';
+import logo from '../../images/logo.png';
+import { grey } from '@mui/material/colors';
+
+
+
 
 const CrmAppbar = () => {
   const { drawer, user } = useSelector((state) => ({ ...state }));
+
+  const darkMode = useSelector((state) => state.darkMode.darkMode);
+
   const dispatch = useDispatch();
 
   const handleDrawerOpen = () => {
@@ -24,12 +32,16 @@ const CrmAppbar = () => {
     });
   };
 
+  const handleToggleDarkMode = () => {
+    dispatch({ type: 'TOGGLE_DARK_MODE' });
+  };
+
   return (
     <>
       {user && (
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
-          <AppBarStyle position="fixed" open={drawer}>
+          <AppBarStyle position="fixed" open={drawer} sx={{backgroundColor : darkMode ? "auto"  : 'white'}}> 
             <Toolbar>
               <IconButton
                 color="inherit"
@@ -37,22 +49,24 @@ const CrmAppbar = () => {
                 onClick={handleDrawerOpen}
                 edge="start"
                 sx={{
-                  marginRight: 5,
+                  marginRight: 2,
                   ...(drawer && { display: 'none' }),
                 }}
               >
-                <MenuIcon />
+                <MenuIcon sx={{color : darkMode ? "auto"  : grey[900]}} />
               </IconButton>
+              <img src={logo} alt="Kompar logo" width="40" style={{ marginRight : "5px"}} />
+
               <Typography
                 variant="h6"
                 noWrap
                 component="div"
-                sx={{ flexGrow: 1 }}
+                sx={{ flexGrow: 1, ml : 1, color :  darkMode ? "auto"  : grey[900] }}
               >
                 Kompar Dashboard
               </Typography>
-              <IconButton onClick={() => console.log('im ready')}>
-                {drawer ? <Brightness7 /> : <Brightness4 />}
+              <IconButton onClick={handleToggleDarkMode}>
+                {darkMode ? <Brightness7 /> : <Brightness4 />}
               </IconButton>
             </Toolbar>
           </AppBarStyle>

@@ -5,24 +5,23 @@ import { MainContainer } from '../../style/mainContainer';
 import { adminColumns } from '../../components/dataGrid/columns';
 import { getAdminRows, getFilters } from '../../functions/contract';
 import DraggableDialog from '../../components/dialog';
+import { grey } from '@mui/material/colors';
 
 
 
 const Admin = () => {
-  const { drawer, quickFilter   } = useSelector((state) => ({ ...state }));
+  const { drawer, quickFilter  } = useSelector((state) => ({ ...state }));
   const serverData = useSelector(state => state.filters.serverData);
+  const darkMode = useSelector((state) => state.darkMode.darkMode);
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalRowCount, setTotalRowCount] = useState(0);
 
+  const { paginationModel, sortOptions } = useSelector(
+    (state) => state.paginationAndSortReducer
+  );
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 20,
-  });
-
-  const [sortOptions, setSortOptions] = useState([ { field: 'date_de_la_signature', sort: 'desc' } ]);
  
   const loadContract = () => {
     setLoading(true);
@@ -36,9 +35,10 @@ const Admin = () => {
     
      
     } else {
-      getAdminRows(paginationModel, sortOptions, quickFilter).then((response) => {
+      getAdminRows(paginationModel, sortOptions, quickFilter.text).then((response) => {
         const { data, total } = response.data;
         setRows(data);
+        console.log("after set",rows)
         setTotalRowCount(total);
         setLoading(false);
       });
@@ -51,15 +51,16 @@ const Admin = () => {
 
   useEffect(() => {
     loadContract();
-    console.log('--------> redux data',quickFilter );
-  }, [serverData, paginationModel, sortOptions, quickFilter ]);
+  }, [serverData, paginationModel, sortOptions, quickFilter.text ]);
+
+  
 
   return (
-    <MainContainer open={drawer}>
-      <DataTable rows={rows} columns={adminColumns} paginationModel={paginationModel} 
-      setPaginationModel={setPaginationModel} sortOptions={sortOptions} setSortOptions={setSortOptions}
+    <MainContainer open={drawer} sx={{backgroundColor : darkMode ? "auto"  : grey[100] }}>
+      <DataTable rows={rows} columns={adminColumns}  
+     
       loading={loading} setLoadng={setLoading} 
-      totalRowCount={totalRowCount} setToatalRowCont={setTotalRowCount} page={paginationModel.page}
+      totalRowCount={totalRowCount} setToatalRowCont={setTotalRowCount} 
          />
     </MainContainer>
   );

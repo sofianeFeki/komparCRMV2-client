@@ -83,7 +83,7 @@ export const Filters = () => {
         type: 'SET_FILTERS',
         payload: { date: [item.selection] }
       });
-      console.log(item.selection)
+      console.log("item.selection", item.selection)
     };
   
     const handleReset = () => {
@@ -200,6 +200,7 @@ return (
         handleApply={handleApply}
         open={open}
         setOpen={setOpen}
+        utcOffset={120}
       />
     ) : null}
   </>

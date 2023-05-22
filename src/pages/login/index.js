@@ -2,7 +2,7 @@ import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { auth } from '../../services/firebase';
 import { createOrUpdateUser } from '../../functions/user';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -28,6 +28,8 @@ function Copyright(props) {
 
 const theme = createTheme();
 
+
+
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -35,9 +37,16 @@ const Login = () => {
     password: '',
   });
   const dispatch = useDispatch();
-  const history = useNavigate();
-
+  const location = useLocation();
+  const history = useNavigate();  
+  //const from = location.state?.from?.pathname || "/" ;
   const { user } = useSelector((state) => ({ ...state }));
+
+  // useEffect(() => {
+  //   if (user) {
+  //     history("/");
+  //   }
+  // }, [user, history]);
 
   const roleBasedRedirect = (res) => {
     if (res.data.role === 'admin') {
@@ -47,7 +56,7 @@ const Login = () => {
       history('/quality');
     }
     if (res.data.role === 'wc') {
-      history('/welcome-call');
+      history('/wc');
     }
     if (res.data.role === 'backOffice') {
       history('back-office');
@@ -69,9 +78,6 @@ const Login = () => {
         form.email,
         form.password
       );
-
-      // history(from, { replace: true });
-
       const { user } = resp;
       const idTokenResult = await user.getIdTokenResult();
       createOrUpdateUser(idTokenResult.token)
@@ -88,11 +94,13 @@ const Login = () => {
           });
           setLoading(false);
           roleBasedRedirect(res);
-
+          //history(from, {replace : true})
         })
         .catch((err) => alert(err));
     } catch (error) {
       alert(error);
+      setLoading(false);
+
     }
   };
 

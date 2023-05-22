@@ -199,6 +199,11 @@ export  const contractCreateColumns = [
       valueFormatter: ({ value }) => moment(new Date(value)).format('DD/MM/YYYY ')
 
     },
+    {
+      field: 'Tél',
+      headerName: 'Tél',
+      flex : 0.4,
+    },
     
     {
       field: 'StatutQté',
@@ -340,6 +345,11 @@ export  const contractCreateColumns = [
       headerName: 'Partenaire',
       flex : 0.4
     },
+    {
+      field: 'Tél',
+      headerName: 'Tél',
+      flex : 0.4,
+    },
   
     {
       field: 'actions',
@@ -395,6 +405,11 @@ export  const contractCreateColumns = [
       field: 'Nom_du_partenaire',
       headerName: 'Partenaire',
       flex : 0.4
+    },
+    {
+      field: 'Tél',
+      headerName: 'Tél',
+      flex : 0.4,
     },
   
     {

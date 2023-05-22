@@ -65,7 +65,7 @@ export const Filters = () => {
         }
       }
       setFilterCount(count);
-      console.log("lalalalalala", paginationModel, sortOptions );   
+      console.log("lalalalalala", filters );   
     }, [filters, paginationModel, sortOptions]);
     
 

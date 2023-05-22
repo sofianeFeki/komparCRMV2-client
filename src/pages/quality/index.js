@@ -6,7 +6,7 @@ import {  GridActionsCellItem } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import { Link, useNavigate } from 'react-router-dom';
-import { getFilters, getQtéRows, getReservation } from '../../functions/contract';
+import { getQtéRows, getReservation } from '../../functions/contract';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { toast } from 'react-toastify';
 import moment from 'moment';
@@ -88,6 +88,11 @@ useEffect(() => {
       field: 'energie',
       headerName: 'Energie',
       flex : 0.3
+    },
+    {
+      field: 'Tél',
+      headerName: 'Tél',
+      flex : 0.4,
     },
     {
       field: 'Nom_du_partenaire',

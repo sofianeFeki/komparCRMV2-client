@@ -56,7 +56,7 @@ import {
         {
           title: 'welcome call',
           icon: <SupportAgent />,
-          link: '/welcome-call',
+          link: '/wc',
         },
       ],
       []

@@ -1,5 +1,5 @@
-import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import React, { lazy, Suspense, useMemo } from 'react';
+import {  Route, Routes } from 'react-router-dom';
 import CrmAppbar from './components/appbar';
 import Admin from './pages/admin';
 import ContractCreate from './pages/admin/contractCreate';
@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import RequireAuth from './protectedRoutes/RequireAuth';
+import Auth from './pages/auth/Auth';
 
 const Login = lazy(() => import('./pages/login'));
 
@@ -22,11 +23,6 @@ function App() {
   const darkMode = useSelector((state) => state.darkMode.darkMode);
 
 
-
-
-
-
-  //const [dark, setDark] = useState(false);
   
   const darkTheme = useMemo(
    () =>
@@ -35,19 +31,23 @@ function App() {
          mode: darkMode ? 'dark' : 'light',
        },
      }),
+     
    [darkMode]
  );
+
+
 
   return (
     
     <Suspense>
         <ThemeProvider theme={darkTheme}>
-
       <CrmAppbar  dark={darkMode} />
       <UserProvider>
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Auth />} />
+
         <Route
               element={<RequireAuth allowedRoles={['admin', 'sav']} />}
             >
@@ -61,7 +61,7 @@ function App() {
         <Route
               element={<RequireAuth allowedRoles={['admin', 'wc']} />}
             >
-        <Route path="/welcome-call" element={<WelcomeCall />} />
+        <Route path="/wc" element={<WelcomeCall />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={['admin']} />}>
         <Route path="/admin" element={<Admin />} />

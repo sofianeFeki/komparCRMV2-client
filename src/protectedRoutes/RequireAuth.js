@@ -1,6 +1,5 @@
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import Auth from '../pages/auth/Auth';
 
 
 const RequireAuth = ({ allowedRoles }) => {
@@ -15,7 +14,7 @@ const RequireAuth = ({ allowedRoles }) => {
   ) : user && user?.token ? (
     <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Auth />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 

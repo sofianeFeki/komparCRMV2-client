@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import {
   DataGrid,
   gridClasses,
-  gridPageCountSelector,
   gridPageSelector,
   GridToolbarColumnsButton,
   GridToolbarContainer,
@@ -16,7 +15,7 @@ import {
 } from '@mui/x-data-grid';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
-import {  ThemeProvider, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 
 import { createTheme } from '@mui/material/styles';
@@ -44,7 +43,7 @@ const getSelectedHoverBackgroundColor = (color, mode) =>
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 
   '& ': {
-    backgroundColor: theme.palette.mode === 'light' ? 'white' : 'auto',
+    backgroundColor: theme.palette.mode === 'dark' ? 'auto' : 'white',
   },
   '& .super-app-theme--annulation': {
     backgroundColor: getBackgroundColor(
@@ -173,7 +172,6 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
           width: '100%',
         }}
       >
-                <ThemeProvider theme={theme}>
 
           <StyledDataGrid
             rows={rows}
@@ -181,6 +179,7 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
             onFilterModelChange={onFilterChange}
             paginationModel={paginationModel}
             loading={loading}
+            disableColumnMenu={true}
             paginationMode="server"
             sortingMode="server"
             onPaginationModelChange={(newPaginationModel) =>
@@ -240,10 +239,16 @@ const [filterValue, setFilterValue] = useState([quickFilter.text[0]]);
                   quickFilterValues: filterValue ,
                 },
               },
+              columns: {
+                ...rows.initialState?.columns,
+                columnVisibilityModel: {
+                  Tél: false,
+                  
+                },
+              },
             }}
             
           />
-          </ThemeProvider>
       </Box>
     </Box>
   );

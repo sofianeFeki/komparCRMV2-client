@@ -3,14 +3,13 @@ import { useSelector } from 'react-redux';
 import { DataTable } from '../../components/dataGrid';
 import { MainContainer } from '../../style/mainContainer';
 import { adminColumns } from '../../components/dataGrid/columns';
-import { getAdminRows, getFilters } from '../../functions/contract';
-import DraggableDialog from '../../components/dialog';
+import { getAdminRows } from '../../functions/contract';
 import { grey } from '@mui/material/colors';
 
 
 
 const Admin = () => {
-  const { drawer, quickFilter  } = useSelector((state) => ({ ...state }));
+  const { drawer, quickFilter , user } = useSelector((state) => ({ ...state }));
   const serverData = useSelector(state => state.filters.serverData);
   const darkMode = useSelector((state) => state.darkMode.darkMode);
 
@@ -51,6 +50,7 @@ const Admin = () => {
 
   useEffect(() => {
     loadContract();
+    console.log("user -----",user)
   }, [serverData, paginationModel, sortOptions, quickFilter.text ]);
 
   
